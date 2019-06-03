@@ -54,7 +54,10 @@ genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, dele
     }
     result <- paste(PNPair[,1],PNPair[,2],sep=" ")
     pajek <- c(pajek, "*Edges", result)
-    write(pajek, file=file.choose())
+    pajek_path <- choose.files(caption = "Save as Pajek .net file?", multi = F)
+    if (!length(pajek_path) == 0) {
+      write(pajek, file=pajek_path)
+    }
   }
   net <- graph_from_data_frame(d=PNPair, vertices=data,directed=F)
   return(net)

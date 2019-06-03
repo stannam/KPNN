@@ -110,17 +110,26 @@ toHangul <- function(input){
       confirm <- ""
       input_split <- unlist(strsplit(input,split=""))
       fortis_location <- grep("ㅃ|ㅉ|ㄸ|ㄲ|ㅆ", input_split)
-      intermediate_syllable <- vector()
-      for (i in 1:length(fortis_location)){
-        intermediate_syllable[i] <- paste0(input_split[fortis_location[i]-2], input_split[fortis_location[i]-1])
-        intermediate_syllable[i] <- HangulAutomata(intermediate_syllable[i])
-      }
-      another_output <- vector()
-      for (i in 1:length(fortis_location)){
-        another_output <- paste0(another_output,intermediate_syllable[i],input_split[fortis_location[i]])
-      }
-      another_output <- paste0(another_output,input_split[(tail(fortis_location,1)+1):length(input_split)])
+      for (i in fortis_location){
+        if (!is.na(cv_split[i+3])){
+          if (cv_split[i+3] == "C"){
+            input_split[i] <- HangulAutomata(paste(input_split[i:(i+2)],collapse=""))
+            input_split[i+1:i+2] <- "X"
+          } else {
+            input_split[i] <- HangulAutomata(paste(input_split[i:(i+1)],collapse=""))
+            input_split[i+1] <- "X"
+          }
+        } else {
+          input_split[i] <- HangulAutomata(paste(input_split[i:length(input_split)],collapse=""))
+          input_split[(i+1):length(input_split)] <- "X"
+        }
+      } 
+      another_output <- paste(input_split,collapse="")
+      another_output <- gsub("X","",another_output)
       another_output <- HangulAutomata(another_output)
+      #for (i in 1:length(fortis_location)){
+      #  another_output <- paste0(another_output,intermediate_syllable[i],input_split[fortis_location[i]])
+      #}
       while (tolower(confirm) != "y"){
         confirm <- readline(prompt = paste0(input," = ", another_output, ".... Is it correct (y/n)? (y나 Y 대신 'ㅛ'입력 가능) "))
         if (confirm =="ㅛ") {confirm <- "y"}
