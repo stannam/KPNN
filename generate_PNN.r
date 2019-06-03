@@ -35,7 +35,7 @@ genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, dele
     unit <- convention
   }
 
-    source(".\\hangul_converter.r", encoding = "UTF-8")
+  source(".\\hangul_converter.r", encoding = "UTF-8")
   data <- convertHangul(data)
   
   if (unit == "syllable"){
