@@ -15,7 +15,7 @@ source(".\\generate_PNN.r", encoding = "UTF-8")
 
 net <- genPNN(data = data,
               entry = "entry",
-              convention = "klat",
+              convention = "klat2",
               unit = "syllable",
               deletion = TRUE,
               pajek = T)
