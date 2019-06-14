@@ -8,7 +8,7 @@ convertHangul <- function(data, entry = "entry", convention = "klat"){
         stop("Must enter a column name for wordforms ('entry' by default).")
       }
       list.data <- as.list(data[[entry]])
-      result <- rapply(list.data, convertHangul)
+      result <- rapply(list.data, convertHangul, entry = entry, convention = convention)
       result <- as.data.frame(matrix(result, ncol=2, byrow=T), stringsAsFactors=F)
       colnames(result) <- c("jamo",convention)
       result <- cbind(data, result)
@@ -17,7 +17,12 @@ convertHangul <- function(data, entry = "entry", convention = "klat"){
     }
   
   jamo <- toJamo(data)
-  klat <- toKlat(jamo,convention,environment())
+  if(exists("transcription_location")){
+    klat <- toKlat(jamo,convention = convention, environment(), transcription_location = transcription_location)
+  } else {
+    klat <- toKlat(jamo,convention = convention, environment())
+  }
+  
   result <- cbind(jamo,klat)
   colnames(result) <- c("jamo",convention)
   return(result)
@@ -40,14 +45,14 @@ toJamo <- function(data) {
   return(jamo)
 }
 
-toKlat <- function(jamo, convention = "klat", env = NULL) {
+toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location = NULL) {
   if (convention == "klat"){
     Klattese <- read.table(file = ".\\criteria\\klattese.csv", sep = ",", header=T)
   } else {
-    transcription_location = NULL
     while(length(transcription_location) == 0){
       transcription_location <- choose.files(default = "", 
                                              caption = "Select a jamo-to-phonetic-symbol table", multi = F)
+      transcription_location <<- transcription_location
     }
     Klattese <- read.table(file = transcription_location, sep = ",", header=T)
   }

@@ -36,7 +36,7 @@ genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, dele
   }
 
   source(".\\hangul_converter.r", encoding = "UTF-8")
-  data <- convertHangul(data)
+  data <- convertHangul(data, entry = entry, convention = convention)
   
   if (unit == "syllable"){
     list_jamo <- as.list(data$jamo)
