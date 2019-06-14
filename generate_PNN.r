@@ -62,3 +62,53 @@ genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, dele
   net <- graph_from_data_frame(d=PNPair, vertices=data,directed=F)
   return(net)
 }
+
+noNeighbor <- function(data, pnn, append = F){
+  if(!exists("pnn")){
+    stop("A PNN must be specified!")
+  }
+  if(append == T){
+    if(!exists("data")){
+      stop("A corpus must be specified if you want something to be attached to it")
+    }
+  }
+  no_neighbors <- vector()
+  for (i in 1:gorder(net)){
+    neighbor_list <- as.list(neighbors(pnn,i))
+    no_neighbors[i] <- length(neighbor_list)
+  }
+  if(append == T){
+    data[["number_of_neighbors"]] <- no_neighbors 
+    output <- data
+  } else {
+    output <- no_neighbors
+  }
+  return(output)
+}
+
+meanNeighbor <- function(data, pnn, attribute, append = F){
+  if(!exists("data")|!exists("pnn")|!exists("attribute")){
+    stop("You must specify a corpus, a PNN, and an attribute to calculate the mean of!")
+  }
+  no_neighbors <- vector()
+  mean_neighbor_att <- vector()
+  for (i in 1:gorder(net)){
+    neighbor_list <- as.list(neighbors(pnn,i))
+    no_neighbors[i] <- length(neighbor_list)
+
+    if(no_neighbors[i]!=0) {
+      att_of_neighbors <- lapply(neighbor_list, vertex_attr, graph=pnn, name=attribute)
+      mean_neighbor_att[i] <- mean(unlist(att_of_neighbors))
+    } else {
+      mean_neighbor_att[i] <- NA
+    }
+  }
+  if(append == T){
+    newcol <- paste0("mean_neighbor_",attribute)
+    data[[newcol]] <- mean_neighbor_att
+    output <- data
+  } else {
+    output <- mean_neighbor_att
+  }
+  return(output)
+}
