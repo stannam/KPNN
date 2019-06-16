@@ -43,3 +43,22 @@ removeSaisiot <- function(data, entry = "entry", id = 1){
     return(output)
   
 }
+
+updataSaisiot <- function(x, y, entry = "entry"){
+  if (any(class(x)=="data.frame")){
+    if (is.null(x[[entry]])){
+      stop("Must enter a column name for wordforms ('entry' by default).")
+    }
+  } else if(class(x)!="character"){
+    stop("Please input a character, data.frame or tbl object.")
+  }
+  x[["id"]] <- 1:nrow(x)
+  y$user_choice[y$user_choice == ""] <- y$original
+  id_ref <- y$id
+  if(!all(x[[entry]][id_ref]==y$original)){
+    stop("'Corpus' and 'saisiot' table must match.")
+  }
+  x[[entry]][y$id] <- y$user_choice
+  return(x)
+}
+  
