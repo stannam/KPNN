@@ -28,7 +28,7 @@ convertHangul <- function(data, entry = "entry", convention = "klat"){
   return(result)
 }
 
-toJamo <- function(data) {
+toJamo <- function(data, removeEmptyOnset = TRUE) {
   criteria_DoubleCoda <- read.table(file=".\\criteria\\double_coda.csv", sep = ",", header=TRUE)
   
   syllable <- convertHangulStringToJamos(data)
@@ -38,7 +38,9 @@ toJamo <- function(data) {
       substr(syllable[j], 3, 4) <- as.character(criteria_DoubleCoda$separated[DC])
     } 
     phonemic <- unlist(strsplit(syllable[j], split=""))	# 'syllable'의 j번째 element를 각 자모단위로 분리해서 새로운 vector 'phonemic'에 넣습니다.
-    if(phonemic[1] == "ㅇ") {phonemic[1] <- ""}		# 첫번째 자모(즉, 초성)가 'ㅇ'이면, 그것을 제거합니다.
+    if (removeEmptyOnset == TRUE){
+      if(phonemic[1] == "ㅇ") {phonemic[1] <- ""}		# 첫번째 자모(즉, 초성)가 'ㅇ'이면, 그것을 제거합니다.
+    }
     syllable[j] <- paste(phonemic, collapse="")		# 'phonemic'을 결합해서 다시 음절단위로 만듭니다. 그러나 초성의 ㅇ은 제거된 상태입니다.
   }
   jamo <- paste(syllable, collapse="")				# 그 결과를 jamo에 저장합니다.
@@ -83,32 +85,34 @@ CV_mark <- function(input){
   return(output)
 }
 
-toHangul <- function(input){
+toHangul <- function(input, emptyOnset = F){
   if (!is.character(input) | nchar(input) == 0) {
     stop("Input must be legitimate character!")
   }
-  
-  cv <- CV_mark(input)
-  input_split <- unlist(strsplit(input,split=""))
-  cv_split <- unlist(strsplit(cv,split=""))
-  if (cv_split[1] == "V") {                        # add empty 'ㅇ' before a V-starting word.
-    input_split <- c("N", input_split)
-    cv_split <- c("C", cv_split)
-  }
-  i = 2
-  j = length(input_split)
-  while (i <= j){
-    if (cv_split[i] == "V"){
-      if (cv_split[i-1] == "V"|input_split[i-1] == "ㅇ") {
-        cv_split <- c(cv_split[1:(i-1)], "C", cv_split[i:length(cv_split)])
-        input_split <- c(input_split[1:(i-1)], "N", input_split[i:length(input_split)])
-      }
+  if (emptyOnset == F){
+    cv <- CV_mark(input)
+    input_split <- unlist(strsplit(input,split=""))
+    cv_split <- unlist(strsplit(cv,split=""))
+    if (cv_split[1] == "V") {                        # add empty 'ㅇ' before a V-starting word.
+      input_split <- c("N", input_split)
+      cv_split <- c("C", cv_split)
     }
-    i = i + 1
+    i = 2
     j = length(input_split)
+    while (i <= j){
+      if (cv_split[i] == "V"){
+        if (cv_split[i-1] == "V"|input_split[i-1] == "ㅇ") {
+          cv_split <- c(cv_split[1:(i-1)], "C", cv_split[i:length(cv_split)])
+          input_split <- c(input_split[1:(i-1)], "N", input_split[i:length(input_split)])
+        }
+      }
+      i = i + 1
+      j = length(input_split)
+    }
+    input_split <- gsub("N", "ㅇ", input_split)
+    input <- paste(input_split, collapse="")
   }
-  input_split <- gsub("N", "ㅇ", input_split)
-  input <- paste(input_split, collapse="")
+
   tryCatch(
     output <- HangulAutomata(input, isForceConv = T),
     error = function(e) {
