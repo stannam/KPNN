@@ -172,9 +172,9 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
       }
       list.data <- as.list(data[[entry]])
       surface <- rapply(list.data, applyRulesToHangul, entry = entry, rules = rules)
-      surface <- as.data.frame(matrix(surface), stringsAsFactors=F)
-      colnames(surface) <- "surface"
-      result <- cbind(data, surface)
+      surface <- matrix(surface)
+      data[["surface"]] <- surface
+      result <- data
       return(result)
     } else stop("Please input a character, data.frame or tbl object.")
   }
@@ -263,9 +263,6 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
         jamo <- sub(criteria_Tensification$from[l],criteria_Tensification$to[l],jamo)
       }
     }
-    
-    
-    
   }
   
   if(grepl("n",rules)){
@@ -301,7 +298,6 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
     jamo <- paste0(phoneme, collapse="")
     rm(phoneme, split_cv)
   }
-  browser()
   # 규칙적용 완료. 이하, 다시 한글로 모아쓰기.
   
   output <- toHangul(jamo, emptyOnset = F)

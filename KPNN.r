@@ -10,6 +10,17 @@ source(".\\data_cleaning.r", encoding = "UTF-8")
 
 data <- cleanData(raw)
 
+# 1.5 remove saisiot words
+saisiot_candidate <- removeSaisiot(data = data, 
+                                   entry = "entry")
+write.csv(saisiot_candidate, file = 'saisiot.csv', quote = F, row.names=F)
+
+saisiot_candidate <- read.csv(file = 'saisiot.csv', header = T)
+
+data <- updateSaisiot(x = data, 
+                      y = saisiot_candidate,
+                      entry = "entry")
+
 # 2. generate PNN (based on 1)
 source(".\\generate_PNN.r", encoding = "UTF-8")
 
@@ -74,3 +85,20 @@ fake_lexicons <- rlexgen(data,                      # generates phonotactic pseu
                          ngramn = 2,
                          num = 30,
                          rlex = 5)
+
+# 5. Apply the rules to Hangul forms
+source(".\\hangul_converter.r", encoding = "UTF-8")
+
+surface_table <- applyRulesToHangul(data = data[1:30,], 
+                                    entry = "entry", 
+                                    rules = "pacstnh")
+  
+  # 규칙의 종류와 순서
+  # (P)alatalization: 구개음화 (맏이 -> 마지)
+  # (A)spiration: 격음화 (북한 -> 부칸)
+  # (C)omplex coda simplification: 자음군단순화 (닭도 -> 닥도, 닭 -> 닥)
+  # a(S)similation: 음운동화
+  # (T)ensification: 표준발음법 제23항(예외없는 경음화) 적용
+  # coda (N)eutralization: 음절말 장애음 중화 (빛/빚/빗 -> 빝)
+  # intervocalic (H)-deletion: 모음사이 'ㅎ' 삭제
+  
