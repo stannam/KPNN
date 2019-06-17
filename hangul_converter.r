@@ -89,10 +89,10 @@ toHangul <- function(input, emptyOnset = F){
   if (!is.character(input) | nchar(input) == 0) {
     stop("Input must be legitimate character!")
   }
+  cv <- CV_mark(input)
+  input_split <- unlist(strsplit(input,split=""))
+  cv_split <- unlist(strsplit(cv,split=""))
   if (emptyOnset == F){
-    cv <- CV_mark(input)
-    input_split <- unlist(strsplit(input,split=""))
-    cv_split <- unlist(strsplit(cv,split=""))
     if (cv_split[1] == "V") {                        # add empty 'ㅇ' before a V-starting word.
       input_split <- c("N", input_split)
       cv_split <- c("C", cv_split)
@@ -154,6 +154,156 @@ toHangul <- function(input, emptyOnset = F){
 }
 
 
-applyRulesToHangul <- function(){
-  # A function which applies phonological rules to Korean words written in Hangul string or Jamo.
+applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
+  
+  # 규칙의 종류와 순서
+  # (P)alatalization: 구개음화 (맏이 -> 마지)
+  # (A)spiration: 격음화 (북한 -> 부칸)
+  # (C)omplex coda simplification: 자음군단순화 (닭도 -> 닥도, 닭 -> 닥)
+  # a(S)similation: 음운동화
+  # (T)ensification: 표준발음법 제23항(예외없는 경음화) 적용
+  # coda (N)eutralization: 음절말 장애음 중화 (빛/빚/빗 -> 빝)
+  # intervocalic (H)-deletion: 모음사이 'ㅎ' 삭제
+  
+  if (class(data)[1]!="character") {
+    if (any(class(data)=="data.frame")){
+      if (is.null(data[[entry]])){
+        stop("Must enter a column name for wordforms ('entry' by default).")
+      }
+      list.data <- as.list(data[[entry]])
+      surface <- rapply(list.data, applyRulesToHangul, entry = entry, rules = rules)
+      surface <- as.data.frame(matrix(surface), stringsAsFactors=F)
+      colnames(surface) <- "surface"
+      result <- cbind(data, surface)
+      return(result)
+    } else stop("Please input a character, data.frame or tbl object.")
+  }
+  
+  rules <-tolower(rules)
+  if(!grepl("p",rules)){
+    jamo <- toJamo(data, removeEmptyOnset = T)
+  } else {
+    criteria_DoubleCoda <- read.table(file=".\\criteria\\double_coda.csv", sep = ",", header=TRUE)
+    syllable <- convertHangulStringToJamos(data)
+    for (j in 1:length(syllable)) {
+      DC <- match(substr(syllable[j],3,3), criteria_DoubleCoda$double)
+      if (is.na(DC) == FALSE) {					#겹받침을 둘로 나눔 (eg. "ㄳ" -> "ㄱㅅ")
+        substr(syllable[j], 3, 4) <- as.character(criteria_DoubleCoda$separated[DC])
+      } 
+      phonemic <- unlist(strsplit(syllable[j], split=""))	# 'syllable'의 j번째 element를 각 자모단위로 분리해서 새로운 vector 'phonemic'에 넣습니다.
+      if(!is.na(phonemic[3]) & phonemic[3] == "ㄷ") {phonemic[3] <- "x"}
+      if(!is.na(phonemic[3]) & phonemic[3] == "ㅌ") {phonemic[3] <- "X"}
+      if(phonemic[1] == "ㅇ") {phonemic[1] <- ""}		# 첫번째 자모(즉, 초성)가 'ㅇ'이면, 그것을 제거합니다.
+      
+      syllable[j] <- paste(phonemic, collapse="")		# 'phonemic'을 결합해서 다시 음절단위로 만듭니다. 그러나 초성의 ㅇ은 제거된 상태입니다.
+    }
+    
+    jamo <- paste(syllable, collapse="")				# 그 결과를 jamo로.
+    jamo <- gsub("xㅣ","ㅈㅣ",jamo)             # 구개음화 처리
+    jamo <- gsub("Xㅣ","ㅊㅣ",jamo)
+    jamo <- gsub("x","ㄷ",jamo)
+    jamo <- gsub("X","ㅌ",jamo)
+    
+    rm(criteria_DoubleCoda, syllable, phonemic)
+  }
+  
+  if(grepl("a",rules)){
+    criteria_Aspiration<-read.table(".\\criteria\\aspiration.csv",sep = ",",header=T)
+    if(grepl("ㅎ",jamo)){
+      for (l in 1:nrow(criteria_Aspiration)){
+        if(grepl(criteria_Aspiration$from[l],jamo)){
+          jamo <- sub(criteria_Aspiration$from[l], criteria_Aspiration$to[l], jamo)
+        }
+      }
+    }
+    rm(criteria_Aspiration)
+  } 
+  
+  cv <- CV_mark(jamo)
+  
+  if(grepl("c",rules)){
+    criteria_DoubleCoda <- read.table(file=".\\criteria\\double_coda.csv", sep = ",", header=TRUE)
+    CCC_location<-unlist(gregexpr("VCCC",cv))
+    for (l in CCC_location){
+      CCC_part<-substr(jamo,l+1,l+2)
+      for (m in 1:nrow(criteria_DoubleCoda)){
+        if(grepl(criteria_DoubleCoda$separated[m],CCC_part)){
+          jamo<-sub(CCC_part,criteria_DoubleCoda$to[m],jamo)
+          cv<-sub("CCC","CC",cv)
+        }
+      }
+    }
+    # 이상 CCC ->CC 해결
+    # 아래 부분은 단어 끝에 나오는 자음연쇄(겹받침)의 음가를, 마치 뒤에 자음이 이어지는 것처럼 정해줌
+    if(grepl("CC$",cv)){
+      for (l in 1:nrow(criteria_DoubleCoda)){
+        if(grepl(paste(criteria_DoubleCoda$separated[l],"$",sep=""),jamo)){
+          jamo <- sub(criteria_DoubleCoda$separated[l],criteria_DoubleCoda$to[l],jamo)
+          cv <- sub("CC$","C",cv)
+        }
+      }
+    }
+    rm(criteria_DoubleCoda)
+  }
+  
+  if(grepl("s",rules)){
+    criteria_Assimilation <- read.table(".\\criteria\\assimilation.csv",sep = ",",header=TRUE)
+    for (l in 1:nrow(criteria_Assimilation)){
+      if(grepl(criteria_Assimilation$from[l],jamo)){
+        jamo <- sub(criteria_Assimilation$from[l],criteria_Assimilation$to[l],jamo)
+      }
+    }
+    rm(criteria_Assimilation)
+  }
+  
+  if(grepl("t",rules)){
+    criteria_Tensification <- read.table(".\\criteria\\tensification.csv",sep = ",",header=TRUE)
+    for (l in 1:nrow(criteria_Tensification)){
+      if(grepl(criteria_Tensification$from[l],jamo)){
+        jamo <- sub(criteria_Tensification$from[l],criteria_Tensification$to[l],jamo)
+      }
+    }
+    
+    
+    
+  }
+  
+  if(grepl("n",rules)){
+    neutral <- read.table(".\\criteria\\neutralization.csv",sep = ",",header=TRUE)
+    phoneme <- unlist(strsplit(jamo,split=""))
+    for (l in 1:length(phoneme)){
+      if(is.na(match(phoneme[l],neutral$from))==FALSE){
+        if(l==length(phoneme)|unlist(strsplit(cv,split=""))[l+1]=="C"){
+          phoneme[l] <- as.character(neutral$to[match(phoneme[l],neutral$from)])
+          }
+      }
+      jamo <- paste(phoneme,collapse="")
+    }
+    rm(neutral)
+  }
+  
+  if(grepl("h",rules)){
+    phoneme <- unlist(strsplit(jamo,split=""))
+    split_cv <- unlist(strsplit(cv,""))
+    h_location <- grep("ㅎ",phoneme[2:length(phoneme)])
+    h_location <- h_location + 1
+    h_deletion_criteria <- c("V","C","V")
+    for (i in rev(h_location)){
+      if (i < length(phoneme)){
+        check_h_deletion <- split_cv[(i-1):(i+1)]
+        if (all(check_h_deletion == h_deletion_criteria)) {
+          split_cv <- c(split_cv[1:(i-1)], split_cv[(i+1):length(split_cv)])
+          phoneme <- c(phoneme[1:(i-1)], phoneme[(i+1):length(phoneme)])
+        }
+      }
+    }
+    cv <- paste0(split_cv, collapse="")
+    jamo <- paste0(phoneme, collapse="")
+    rm(phoneme, split_cv)
+  }
+  browser()
+  # 규칙적용 완료. 이하, 다시 한글로 모아쓰기.
+  
+  output <- toHangul(jamo, emptyOnset = F)
+  return(output)
 }
