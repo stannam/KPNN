@@ -29,14 +29,14 @@ net <- genPNN(data = data,
               convention = "klat",
               # surface = T,  #(surface is a parameter to be added for surfacing orthographic form)
               unit = "klat",
-              deletion = TRUE,
+              deletion = T,
               pajek = F)
 
 # 2.1 do something with the generated PNN
 # 2.1.1 plot the network
-plot(net, vertex.label=data$entry,                 # plot the generated PNN, 
-     vertex.shape="none", vertex.label.cex=0.8,    # with such vertex parameters
-     edge.width=2, edge.arrow.size=0, margin=0)    # and such edge parameters
+plot(net,                                                                                      # plot the generated PNN, 
+     vertex.label=vertex_attr(net, name="entry"), vertex.shape="none", vertex.label.cex=0.8,   # with such vertex parameters
+     edge.width=2, edge.arrow.size=0, margin=0)                                                # and such edge parameters
 
 # get number of neighbours for each node (word).
 new_data <- noNeighbor(data = data,
