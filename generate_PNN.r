@@ -1,15 +1,19 @@
-if (!require(doParallel)) install.packages("doParallel")
-library(doParallel)
+if (!require(doSNOW)) install.packages("doSNOW")
+library(doSNOW)
 
 if (!require(igraph)) install.packages("igraph")
 library(igraph)
 
-cl <- makeCluster(detectCores()-1)
-registerDoParallel(cl)
-
 genPNPair <- function (x, deletion = T) {
+  cl <- makeCluster(detectCores()-1)
+  registerDoSNOW(cl)
+  
+  pb <- txtProgressBar(max = length(x), style = 3)
+  progress <- function(n) setTxtProgressBar(pb, n)
+  opts <- list(progress = progress)
+  
   result <- vector
-  result <- foreach (i=1:length(x), .combine='rbind', .packages="base") %dopar% {
+  result <- foreach (i=1:length(x), .combine='rbind', .options.snow = opts) %dopar% {
     output <- vector()
     if (deletion == T){                                                     # include PN by deletion / insertion
       for (j in i:length(x)) {
@@ -27,6 +31,8 @@ genPNPair <- function (x, deletion = T) {
     output
   }
   alarm()
+  close(pb)
+  stopCluster(cl)
   return(result)
 }
 

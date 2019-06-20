@@ -44,7 +44,7 @@ removeSaisiot <- function(data, entry = "entry", id = 1){
   
 }
 
-updataSaisiot <- function(x, y, entry = "entry"){
+updateSaisiot <- function(x, y, entry = "entry"){
   if (any(class(x)=="data.frame")){
     if (is.null(x[[entry]])){
       stop("Must enter a column name for wordforms ('entry' by default).")
