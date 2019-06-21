@@ -4,6 +4,7 @@ library(readxl)
 library(httr)
 GET("https://www.dropbox.com/s/4o12muqa6z2j67r/07a_top1000.uni.xlsx?dl=1", write_disk(tf <- tempfile(fileext = ".xlsx")))
 raw <- read_xlsx(path = tf, col_names = T)
+raw_data = read.csv(file = file.choose(), header = TRUE)
 
 # 1. data cleaning
 source(".\\data_cleaning.r", encoding = "UTF-8")
