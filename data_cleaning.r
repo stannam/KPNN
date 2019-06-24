@@ -1,7 +1,7 @@
 if (!require(dplyr)) install.packages("dplyr")
 library(dplyr)
 
-cleanData <- function(data, entry="entry", filter = "shp") {
+cleanData <- function(data, entry="entry", filter = "sh") {
   # 'filter' argument 
   # Remove various non-phonetic (S)ymbols (e.g., "그__01" becomes "그"; "우리 학교" becomes "우리학교")
   # Remove (H)omphones
