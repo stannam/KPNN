@@ -61,7 +61,10 @@ updateSaisiot <- function(x, y, entry = "entry"){
   y$original <- as.character(y$original)
   y$no_saisiot <- as.character(y$no_saisiot)
   y$user_choice <- as.character(y$user_choice)
-  y$user_choice[y$user_choice == ""] <- y$original
+  empty_row <- which(y$user_choice == ""|is.na(y$user_choice))
+  for(i in empty_row){
+    y$user_choice[i]<- y$original[i]
+  }
   id_ref <- y$id
   if(!all(x[[entry]][id_ref]==y$original)){
     stop("'Corpus' and 'saisiot' table must match.")
