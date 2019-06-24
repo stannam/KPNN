@@ -1,3 +1,6 @@
+if (!require(parallel)) install.packages("parallel")
+library(parallel)
+
 if (!require(doSNOW)) install.packages("doSNOW")
 library(doSNOW)
 
