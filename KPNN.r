@@ -5,11 +5,12 @@ library(httr)
 GET("https://www.dropbox.com/s/4o12muqa6z2j67r/07a_top1000.uni.xlsx?dl=1", write_disk(tf <- tempfile(fileext = ".xlsx")))
 raw <- read_xlsx(path = tf, col_names = T)
 raw_data = read.csv(file = file.choose(), header = TRUE)
-
+raw = raw_data
 # 1. data cleaning
 source(".\\data_cleaning.r", encoding = "UTF-8")
 
 data <- cleanData(raw)
+NNG_Data = extractPOS(data = data, POS = "POS") 
 
 # 1.5 remove saisiot words
 saisiot_candidate <- removeSaisiot(data = data, 
