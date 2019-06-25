@@ -1,7 +1,7 @@
 if (!require(KoNLP)) install.packages("KoNLP")
 library(KoNLP)
 
-convertHangul <- function(data, entry = "entry", convention = "klat"){
+convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL){
   while (nchar(convention) < 1) {
     convention <- readline(prompt = "You must specify a name for convention: ")
   }
@@ -11,20 +11,34 @@ convertHangul <- function(data, entry = "entry", convention = "klat"){
       if (is.null(data[[entry]])){
         stop("Must enter a column name for wordforms ('entry' by default).")
       }
+      
+      masterEnv <- environment()
+      
       list.data <- as.list(data[[entry]])
-      result <- rapply(list.data, convertHangul, entry = entry, convention = convention)
+      result <- rapply(list.data, 
+                       convertHangul, 
+                       entry = entry, 
+                       convention = convention, 
+                       env = masterEnv)
       result <- as.data.frame(matrix(result, ncol=2, byrow=T), stringsAsFactors=F)
       colnames(result) <- c("jamo",convention)
       result <- cbind(data, result)
       return(result)
       } else stop("Please input a character, data.frame or tbl object.")
     }
+  if (is.null(env)) {
+    env = environment()
+    }
   
   jamo <- toJamo(data)
-  if(exists("transcription_location")){
-    klat <- toKlat(jamo,convention = convention, environment(), transcription_location = transcription_location)
+  if(exists("transcription_location", envir = env)){
+    klat <- toKlat(jamo, 
+                   convention = convention, 
+                   transcription_location = get("transcription_location", envir = env))
   } else {
-    klat <- toKlat(jamo,convention = convention, environment())
+    klat <- toKlat(jamo, 
+                   convention = convention, 
+                   env = env)
   }
   
   result <- cbind(jamo,klat)
@@ -61,7 +75,7 @@ toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location
     while(length(transcription_location) == 0){
       transcription_location <- choose.files(default = "", 
                                              caption = "Select a jamo-to-phonetic-symbol table", multi = F)
-      transcription_location <<- transcription_location
+      assign("transcription_location", transcription_location, envir = env)
     }
     Klattese <- read.table(file = transcription_location, sep = ",", header=T)
   }
