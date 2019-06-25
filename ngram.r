@@ -2,6 +2,9 @@ if (!require(ngram)) install.packages("ngram")
 library(ngram)
 
 nngram <- function(data, entry = "entry", convention = "klat", unit = NULL, ngramn = 2) {
+  while (nchar(convention) < 1) {
+    convention <- readline(prompt = "You must specify a name for convention: ")
+  }
   if (is.null(unit)) {
     unit <- convention
   }

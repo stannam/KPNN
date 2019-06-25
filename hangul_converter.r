@@ -2,6 +2,10 @@ if (!require(KoNLP)) install.packages("KoNLP")
 library(KoNLP)
 
 convertHangul <- function(data, entry = "entry", convention = "klat"){
+  while (nchar(convention) < 1) {
+    convention <- readline(prompt = "You must specify a name for convention: ")
+  }
+  
   if (class(data)[1]!="character") {
     if (any(class(data)=="data.frame")){
       if (is.null(data[[entry]])){
@@ -48,6 +52,9 @@ toJamo <- function(data, removeEmptyOnset = TRUE) {
 }
 
 toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location = NULL) {
+  while (nchar(convention) < 1) {
+    convention <- readline(prompt = "You must specify a name for convention: ")
+  }
   if (convention == "klat"){
     Klattese <- read.table(file = ".\\criteria\\klattese.csv", sep = ",", header=T)
   } else {
