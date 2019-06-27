@@ -1,3 +1,4 @@
+Sys.setlocale("LC_CTYPE","korean")                    # for users of non-Korean windows
 # 0. read sample file
 if (!require(readxl)) install.packages("readxl")
 library(readxl)
