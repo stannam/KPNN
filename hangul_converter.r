@@ -1,5 +1,14 @@
 if (!require(KoNLP)) install.packages("KoNLP")
-library(KoNLP)
+tryCatch(
+  library(KoNLP),
+  error = function(e) {
+    if (!require(installr)) install.packages("installr") # if java is not found on the machine
+    library(installr)                                    # (re-)install java with installr package
+    installr::install.java()
+  }
+  
+)
+
 
 convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL){
   while (nchar(convention) < 1) {
