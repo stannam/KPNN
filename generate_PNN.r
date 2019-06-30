@@ -7,9 +7,11 @@ library(foreach)
 if (!require(igraph)) install.packages("igraph")
 library(igraph)
 
-genPNPair <- function (x, deletion = T, init = F, batch = 100) {
+genPNPair <- function (x, deletion = T, init = F, batch = NULL) {
   if (init == T | !file.exists(".\\PNNDump\\PNN.Dump")){
-    batch <- ifelse(length(x)>20000, floor(length(x)/200),100)
+    if (is.null(batch)) {
+      batch <- ifelse(length(x)>20000, floor(length(x)/200),100)
+      }
     result <- vector()
     pickup = 1
     dir.create("PNNdump", showWarnings = FALSE)
@@ -62,7 +64,6 @@ genPNPair <- function (x, deletion = T, init = F, batch = 100) {
     }
     save(x, deletion, batch, result, pickup, file=".\\PNNDump\\PNN.Dump")
     setTxtProgressBar(pb, pickup)
-    browser()
   }
 }
 
