@@ -1,45 +1,72 @@
-if (!require(parallel)) install.packages("parallel")
-library(parallel)
+if (!require(doParallel)) install.packages("doParallel")
+library(doParallel)
 
-if (!require(doSNOW)) install.packages("doSNOW")
-library(doSNOW)
+if (!require(foreach)) install.packages("foreach")
+library(foreach)
 
 if (!require(igraph)) install.packages("igraph")
 library(igraph)
 
-genPNPair <- function (x, deletion = T) {
-  cl <- makeCluster(detectCores()-1)
-  registerDoSNOW(cl)
-  
-  pb <- txtProgressBar(max = length(x), style = 3)
-  progress <- function(n) setTxtProgressBar(pb, n)
-  opts <- list(progress = progress)
-  
-  result <- vector
-  result <- foreach (i=1:length(x), .combine='rbind', .options.snow = opts) %dopar% {
-    output <- vector()
-    if (deletion == T){                                                     # include PN by deletion / insertion
-      for (j in i:length(x)) {
-        if(nchar(x[j]) > (nchar(x[i])-2) & nchar(x[j]) < (nchar(x[i])+2)) { # 음소 개수가 같거나, 1개 차이가 날 경우에만
-          if(adist(x[i], x[j])==1) output <- rbind(output,c(i,j))				# adist() 연산을 해서, 그 결과가 1인 경우에만 output에 기록하기
-        }
-      }
-    } else {                                                          # only consider PN by substitution
-      for (j in i:length(x)) {
-        if(nchar(x[j]) == nchar(x[i])) {                                # 음소 개수가 같을 경우에만
-          if(adist(x[i], x[j])==1) output <- rbind(output,c(i,j))				# adist() 연산을 해서, 그 결과가 1인 경우에만 output에 기록하기
-        }
-      }
-    }
-    output
+genPNPair <- function (x, deletion = T, init = F, batch = 100) {
+  if (init == T | !file.exists(".\\PNNDump\\PNN.Dump")){
+    batch <- ifelse(length(x)>20000, floor(length(x)/200),100)
+    result <- vector()
+    pickup = 1
+    dir.create("PNNdump", showWarnings = FALSE)
+    save(x, deletion, batch, result, pickup, file=".\\PNNDump\\PNN.Dump")
   }
-  alarm()
-  close(pb)
-  stopCluster(cl)
-  return(result)
+  
+  # initialize cluter setting for doParallel
+  cl <- makeCluster(detectCores()-1)
+  registerDoParallel(cl)
+  
+  # load the pickup point and a sanity check
+  x_original <- x
+  load(".\\PNNDump\\PNN.Dump")
+  if(!identical(x_original,x)){
+    stop("Cannot pick up where you exited computing PNN. Please start from the beginning, by specifying init = T.")
+  }
+  rm(x_original)
+  
+  pb <- txtProgressBar(min = 0, max = length(x), style = 3)
+  for (start in seq(pickup, length(x), by = batch)){
+    end <- ifelse((start+batch) < length(x), start+batch-1, length(x))
+    
+    interm <- foreach (i=start:end, .combine='rbind') %dopar% {
+      output <- vector()
+      if (deletion == T){                                                     # include PN by deletion / insertion
+        for (j in i:length(x)) {
+          if(nchar(x[j]) > (nchar(x[i])-2) & nchar(x[j]) < (nchar(x[i])+2)) { # 음소 개수가 같거나, 1개 차이가 날 경우에만
+            if(adist(x[i], x[j])==1) output <- rbind(output,c(i,j))				# adist() 연산을 해서, 그 결과가 1인 경우에만 output에 기록하기
+          }
+        }
+      } else {                                                          # only consider PN by substitution
+        for (j in i:length(x)) {
+          if(nchar(x[j]) == nchar(x[i])) {                                # 음소 개수가 같을 경우에만
+            if(adist(x[i], x[j])==1) output <- rbind(output,c(i,j))				# adist() 연산을 해서, 그 결과가 1인 경우에만 output에 기록하기
+          }
+        }
+      }
+      output
+    }
+    if (ncol(interm)!=0) {result <- rbind(result, interm)}
+    registerDoSEQ()
+    if (end!=length(x)) {
+      pickup <- end+1
+    } else {
+      unlink("PNNdump", recursive = T)
+      stopCluster(cl)
+      close(pb)
+      
+      return(result)
+    }
+    save(x, deletion, batch, result, pickup, file=".\\PNNDump\\PNN.Dump")
+    setTxtProgressBar(pb, pickup)
+    browser()
+  }
 }
 
-genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, deletion = T, pajek = F) {
+genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, deletion = T, pajek = F, init = F, batch = 100) {
   while (nchar(convention) < 1) {
     convention <- readline(prompt = "You must specify a name for convention: ")
     }
@@ -57,7 +84,7 @@ genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, dele
     x <- data[[convention]]
   }
   
-  PNPair <- genPNPair(x, deletion)
+  PNPair <- genPNPair(x, deletion, init, batch)
   data$id <- 1:nrow(data)
   if (pajek == T) {
     pajek <- paste("*Vertices", length(x), sep=" ")
