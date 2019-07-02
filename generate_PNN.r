@@ -67,7 +67,7 @@ genPNPair <- function (x, deletion = T, init = F, batch = NULL) {
   }
 }
 
-genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, deletion = T, pajek = F, init = F, batch = 100) {
+genPNN <- function(data, entry = "entry", convention = "klat", unit = NULL, deletion = T, pajek = F, init = F, batch = NULL) {
   while (nchar(convention) < 1) {
     convention <- readline(prompt = "You must specify a name for convention: ")
     }

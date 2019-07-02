@@ -6,9 +6,10 @@ tryCatch(
     library(installr)                                    # (re-)install java with installr package
     installr::install.java()
   }
-  
 )
 
+if (!require(pbapply)) install.packages("pbapply")
+library(pbapply)
 
 convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL){
   while (nchar(convention) < 1) {
@@ -24,8 +25,9 @@ convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL
       masterEnv <- environment()
       
       list.data <- as.list(data[[entry]])
-      result <- rapply(list.data, 
-                       convertHangul, 
+      print("Currently: converting to Jamo and phenotic symbols")
+      result <- pbsapply(list.data, 
+                       FUN = convertHangul, 
                        entry = entry, 
                        convention = convention, 
                        env = masterEnv)

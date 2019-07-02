@@ -1,6 +1,7 @@
+if (!require(pbapply)) install.packages("pbapply")
+library(pbapply)
+
 removeSaisiot <- function(data, entry = "entry", id = 1){
-  if (!require(pbapply)) install.packages("pbapply")
-  library(pbapply)
   if (class(data)[1]!="character") {
     if (any(class(data)=="data.frame")){
       if (is.null(data[[entry]])){
