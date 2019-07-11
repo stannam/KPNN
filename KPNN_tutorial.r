@@ -1,6 +1,7 @@
 Sys.setlocale("LC_CTYPE","korean")                    # for users of non-Korean windows
 # 0. read sample file
 if (!require(readxl)) install.packages("readxl")
+if (!require(httr)) install.packages("httr")
 library(readxl)
 library(httr)
 GET("https://www.dropbox.com/s/4o12muqa6z2j67r/07a_top1000.uni.xlsx?dl=1", write_disk(tf <- tempfile(fileext = ".xlsx")))
