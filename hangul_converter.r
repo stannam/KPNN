@@ -5,6 +5,7 @@ tryCatch(
     if (!require(installr)) install.packages("installr") # if java is not found on the machine
     library(installr)                                    # (re-)install java with installr package
     installr::install.java()
+    library(KoNLP)
   }
 )
 

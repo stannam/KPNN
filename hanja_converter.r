@@ -1,3 +1,4 @@
+if (!require(httr)) install.packages("httr")
 library(httr)
 GET("https://raw.githubusercontent.com/suminb/hanja/develop/hanja/pairs.py", write_disk(tf <- tempfile(fileext = ".py")))
 raw_reference <- readLines(con = tf)
