@@ -1,7 +1,7 @@
 if (!require(ngram)) install.packages("ngram")
 library(ngram)
 
-nngram <- function(data, entry = "entry", convention = "klat", unit = NULL, ngramn = 2) {
+nngram <- function(data, entry = "entry", convention = "klat", unit = NULL, ngramn = 2, sboundary = F) {
   while (nchar(convention) < 1) {
     convention <- readline(prompt = "You must specify a name for convention: ")
   }
@@ -10,12 +10,17 @@ nngram <- function(data, entry = "entry", convention = "klat", unit = NULL, ngra
   }
   
   source(".\\hangul_converter.r", encoding = "UTF-8")
-  data <- convertHangul(data)
-  
+  data <- convertHangul(data, sboundary = sboundary)
   if (unit == "syllable"){
+    if (sboundary == T) {
+      stop("You can either specify 'unit = syllable' or 'sboundary = TRUE,' but not both.")
+    }
     list_jamo <- as.list(data$jamo)
     x <- rapply(list_jamo, toHangul)
   } else {
+    if (class(data)=="matrix"){
+      data <- as.data.frame(data)
+    }
     x <- data[[convention]]
   }
   

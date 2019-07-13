@@ -12,16 +12,16 @@ tryCatch(
 if (!require(pbapply)) install.packages("pbapply")
 library(pbapply)
 
-convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL){
+convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL, sboundary = F){
   while (nchar(convention) < 1) {
-    convention <- readline(prompt = "You must specify a name for convention: ")
+    convention <- readline(prompt = "You must specify a name for convention: ")    # for the case where 'convention' is empty.
   }
   
   if (class(data)[1]!="character") {
     if (any(class(data)=="data.frame")){
       if (is.null(data[[entry]])){
         stop("Must enter a column name for wordforms ('entry' by default).")
-      }
+      } 
       
       masterEnv <- environment()
       
@@ -31,6 +31,7 @@ convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL
                        FUN = convertHangul, 
                        entry = entry, 
                        convention = convention, 
+                       sboundary = sboundary,
                        env = masterEnv)
       result <- as.data.frame(matrix(result, ncol=2, byrow=T), stringsAsFactors=F)
       colnames(result) <- c("jamo",convention)
@@ -42,7 +43,7 @@ convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL
     env = environment()
     }
   
-  jamo <- toJamo(data)
+  jamo <- toJamo(data, sboundary = sboundary)
   if(exists("transcription_location", envir = env)){
     klat <- toKlat(jamo, 
                    convention = convention, 
@@ -58,7 +59,7 @@ convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL
   return(result)
 }
 
-toJamo <- function(data, removeEmptyOnset = TRUE) {
+toJamo <- function(data, removeEmptyOnset = TRUE, sboundary = FALSE) {
   criteria_DoubleCoda <- read.table(file=".\\criteria\\double_coda.csv", sep = ",", header=TRUE)
   
   syllable <- convertHangulStringToJamos(data)
@@ -67,12 +68,19 @@ toJamo <- function(data, removeEmptyOnset = TRUE) {
     if (is.na(DC) == FALSE) {					#겹받침을 둘로 나눔 (eg. "ㄳ" -> "ㄱㅅ")
       substr(syllable[j], 3, 4) <- as.character(criteria_DoubleCoda$separated[DC])
     } 
-    phonemic <- unlist(strsplit(syllable[j], split=""))	# 'syllable'의 j번째 element를 각 자모단위로 분리해서 새로운 vector 'phonemic'에 넣습니다.
     if (removeEmptyOnset == TRUE){
+      phonemic <- unlist(strsplit(syllable[j], split=""))	# 'syllable'의 j번째 element를 각 자모단위로 분리해서 새로운 vector 'phonemic'에 넣습니다.
       if(phonemic[1] == "ㅇ") {phonemic[1] <- ""}		# 첫번째 자모(즉, 초성)가 'ㅇ'이면, 그것을 제거합니다.
+      syllable[j] <- paste(phonemic, collapse="")		# 'phonemic'을 결합해서 다시 음절단위로 만듭니다. 그러나 초성의 ㅇ은 제거된 상태입니다.
     }
-    syllable[j] <- paste(phonemic, collapse="")		# 'phonemic'을 결합해서 다시 음절단위로 만듭니다. 그러나 초성의 ㅇ은 제거된 상태입니다.
+    
   }
+  
+  if (sboundary == TRUE){
+    syllable <- paste0(syllable,"$")
+    syllable[length(syllable)] <- substr(syllable[length(syllable)],1,nchar(syllable[length(syllable)])-1)
+  }
+  
   jamo <- paste(syllable, collapse="")				# 그 결과를 jamo에 저장합니다.
   return(jamo)
 }
@@ -82,7 +90,7 @@ toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location
     convention <- readline(prompt = "You must specify a name for convention: ")
   }
   if (convention == "klat"){
-    Klattese <- read.table(file = ".\\criteria\\klattese.csv", sep = ",", header=T)
+    Klattese <- read.table(file = ".\\criteria\\klattese.csv", fileEncoding = "utf-8", sep = ",", header=T)
   } else {
     while(length(transcription_location) == 0){
       transcription_location <- choose.files(default = "", 
@@ -104,7 +112,7 @@ toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location
 }
 
 CV_mark <- function(input){
-  CV_ref <- read.table(file = ".\\criteria\\klattese.csv", sep = ",", header=T)
+  CV_ref <- read.table(file = ".\\criteria\\klattese.csv", fileEncoding = "utf-8", sep = ",", header=T)
   output <- vector()
   phoneme <- unlist(strsplit(input,split=""))
   for (j in 1:length(phoneme)){

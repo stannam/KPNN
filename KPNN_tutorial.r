@@ -78,7 +78,8 @@ K_ngram <- nngram(data,
                   entry = "entry",                  # entry: the name of the column where entries are located in 'data'
                   convention = "klat",
                   unit = "klat",
-                  ngramn = 2)
+                  ngramn = 2,                       # ngramn: the 'n' of 'ngram'. eg., 2 for bigram; 3 for trigram
+                  sboundary = T)                    # sboundary: treat syllable boundary($) as another phonetic symbol?
 
 ngram_result_in_table <- get.phrasetable(K_ngram)   # describes ngram object in a table
 
