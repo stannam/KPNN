@@ -30,10 +30,11 @@ source(".\\generate_PNN.r", encoding = "UTF-8")
 net <- genPNN(data = data,
               entry = "entry",
               convention = "klat",
-              # surface = T,  #(surface is a parameter to be added for surfacing orthographic form)
+              #surface = T,  #(surface is a parameter to be added for surfacing orthographic form)
               unit = "klat",
               deletion = T,
-              pajek = F)
+              pajek = F,
+              init = T)
 
 # 2.1 do something with the generated PNN
 # 2.1.1 plot the network
@@ -79,7 +80,7 @@ K_ngram <- nngram(data,
                   convention = "klat",
                   unit = "klat",
                   ngramn = 2,                       # ngramn: the 'n' of 'ngram'. eg., 2 for bigram; 3 for trigram
-                  sboundary = T)                    # sboundary: treat syllable boundary($) as another phonetic symbol?
+                  sboundary = F)                    # sboundary: treat syllable boundary($) as another phonetic symbol?
 
 ngram_result_in_table <- get.phrasetable(K_ngram)   # describes ngram object in a table
 
@@ -100,10 +101,17 @@ fake_lexicons <- rlexgen(data,                      # generates phonotactic pseu
                          num = 30,
                          rlex = 5)
 
-# 5. Apply the rules to Hangul forms
+# 5. describe syllable forms by the location in a word (word-initial, word-medial or word-final)
+source(".\\syllable_by_location.r", encoding = "UTF-8")
+
+syllable_types <- syllableWordLoc(data,
+                                  entry = "entry",
+                                  rules = T)
+
+# 6. Apply the rules to Hangul forms
 source(".\\hangul_converter.r", encoding = "UTF-8")
 
-surface_table <- applyRulesToHangul(data = data[1:30,], 
+surface_table <- applyRulesToHangul(data = data, 
                                     entry = "entry", 
                                     rules = "pacstnh")
   
