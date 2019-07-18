@@ -16,6 +16,9 @@ changeWe <- function(data, entry = "entry") {
   
   source(".\\hangul_converter.r", encoding = "UTF-8")
   
+  # if NA then NA
+  if(is.na(data)){return(NA)}
+  
   # change to jamo
   jamo <- toJamo(data)
   # change 'ㅚ' to 'ㅞ'
