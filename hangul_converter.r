@@ -177,17 +177,16 @@ toHangul <- function(input, emptyOnset = F){
       another_output <- paste(input_split,collapse="")
       another_output <- gsub("X","",another_output)
       another_output <- HangulAutomata(another_output)
-      #for (i in 1:length(fortis_location)){
-      #  another_output <- paste0(another_output,intermediate_syllable[i],input_split[fortis_location[i]])
+      
+      # older version which required the user to confrim before 'another_output' replaces 'output'
+      #while (tolower(confirm) != "y"){
+      #  confirm <- readline(prompt = paste0(input," = ", another_output, ".... Is it correct (y/n)? (y나 Y 대신 'ㅛ'입력 가능) "))
+      #  if (confirm =="ㅛ") {confirm <- "y"}
+      #  if (tolower(confirm) != "y"){
+      #  userinput <- readline(prompt = paste0("What should be the Hangul syllables for ","\"", input,"\"?     \n>> "))
+      #  another_output <- userinput
+      #  }
       #}
-      while (tolower(confirm) != "y"){
-        confirm <- readline(prompt = paste0(input," = ", another_output, ".... Is it correct (y/n)? (y나 Y 대신 'ㅛ'입력 가능) "))
-        if (confirm =="ㅛ") {confirm <- "y"}
-        if (tolower(confirm) != "y"){
-        userinput <- readline(prompt = paste0("What should be the Hangul syllables for ","\"", input,"\"?     \n>> "))
-        another_output <- userinput
-        }
-      }
       output <<- another_output
     }
   )
