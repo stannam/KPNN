@@ -113,7 +113,7 @@ noNeighbor <- function(data, pnn, append = F){
     }
   }
   no_neighbors <- vector()
-  for (i in 1:gorder(net)){
+  for (i in 1:gorder(pnn)){
     neighbor_list <- as.list(neighbors(pnn,i))
     no_neighbors[i] <- length(neighbor_list)
   }
