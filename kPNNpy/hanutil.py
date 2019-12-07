@@ -36,7 +36,9 @@ def han_to_jamo(word):
             result.append(CODA_LIST[coda])
         else:
             result.append(letter)
-    return "".join(result)
+    jamo = "".join(result)
+    jamo = double_coda(jamo, encode=False)
+    return(jamo)
 
 def jamo_to_han(jamo):
     split_jamo = list(jamo)
@@ -77,24 +79,39 @@ def double_coda(jamo, encode=False):
             items = line.split(",")
             double.append(items[0])
             sep.append(items[1])
-        print (double)
-        print(sep)
+        #print(double)
+        #print(sep)
+
+    cv = cv_tagger(jamo)
 
     if encode:
         for c, separated in enumerate(sep):
-            jamo = re.sub(separated, double[c], jamo)
-
+            targets = re.finditer(separated, jamo)
+            for target in targets:
+                start, end = target.span()
+                try:
+                    if cv[end] == "V":
+                        continue
+                    else:
+                        jamo = jamo[:start] + double[c] + jamo[end:]
+                except IndexError:
+                    jamo = jamo[:start] + double[c] + jamo[end:]
     else:
-        pass
+        for c, double_coda in enumerate(double):
+            jamo = re.sub(double_coda, sep[c], jamo)
 
-    print(jamo)
+    #print(jamo)
+    return(jamo)
 
-
+# TODO: 'ㅇ' removal / insertion for the empty onset
 
 
 if __name__ == '__main__':
+    # test full decoding of hangul into jamo
+    print(han_to_jamo("밝뚥쀾뱦가웉"))
+
     # test double coda
-    double_coda("ㅂㅏㄱㅅㅠ",True)
+    double_coda("ㅂㅣㄺㅇㅜㄾㅑ",False)
 
     # test jamo-to-hangul
 #    jamo_to_han("ㄴㅏㄴ")
