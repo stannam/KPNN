@@ -16,8 +16,12 @@ CODA_LIST = ['', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 
                  'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
 
 
-def han_to_jamo(word):
+def han_to_jamo(word, empty_onset=False):
     split_word = list(word)
+
+    if not empty_onset:
+        onset_list = ONSET_LIST[:]
+        onset_list[11]=''
 
     result = list()
     for letter in split_word:
@@ -27,7 +31,7 @@ def han_to_jamo(word):
             if char_code < 0:
                 result.append(letter)
             onset = int(char_code / ONSET)
-            result.append(ONSET_LIST[onset])
+            result.append(onset_list[onset])
 
             vowel = int((char_code - (ONSET * onset)) / CODA)
             result.append(VOWEL_LIST[vowel])
@@ -41,10 +45,26 @@ def han_to_jamo(word):
     return(jamo)
 
 def jamo_to_han(jamo):
-    split_jamo = list(jamo)
+    jamo = double_coda(jamo, encode=True)
     cv = cv_tagger(jamo)
 
-    CC = double_coda(jamo, encode=True)
+    # insert empty codas in between VV sequences
+    if cv[0] =="V":
+        jamo = "ㅇ" + jamo
+        cv.insert(0, "C")
+
+    cv_combined = ''.join(cv)
+    while re.search("VV", cv_combined):
+        VV = re.search("VV", cv_combined)
+        start, end = VV.span()
+        cv_combined = cv_combined[:(start+1)] + "C" + cv_combined[(end-1):]
+        jamo = jamo[:(start+1)] + "ㅇ" + jamo[(end-1):]
+
+    split_jamo = list(jamo)
+    cv = list(cv_combined)
+
+    result = []
+    onset = -1
 
     for c, letter in enumerate(split_jamo):
         if cv[c] == "V":
@@ -52,14 +72,29 @@ def jamo_to_han(jamo):
         elif c == len(split_jamo)-1:
             coda = CODA_LIST.index(letter)
         elif cv[c+1] == "V":
+            if onset > -1: # check if this is the first syllable. if not, add syllable to the result
+                try:
+                    coda
+                except UnboundLocalError:
+                    coda = 0
+
+                syllable = chr((((onset * 21) + vowel) * 28) + coda + GA_CODE)
+                result.append(syllable)
+                del coda, vowel
             onset = ONSET_LIST.index(letter)
         else:
             coda = CODA_LIST.index(letter)
 
-    target = (((onset * 21) + vowel) * 28 )+ coda + GA_CODE
+    try:
+        coda
+    except UnboundLocalError:
+        coda = 0
+    syllable = chr((((onset * 21) + vowel) * 28) + coda + GA_CODE)
+    result.append(syllable)
+    result = ''.join(result)
     # print("onset: {}, nucleus: {}, coda: {}".format(onset,vowel,coda))
     # print(target)
-    return chr(target)
+    return result
 
 
 def cv_tagger(jamo):
@@ -93,28 +128,27 @@ def double_coda(jamo, encode=False):
                     if cv[end] == "V":
                         continue
                     else:
-                        jamo = jamo[:start] + double[c] + jamo[end:]
+                        jamo = jamo[:start] + double[c] + "X" + jamo[end:]
                 except IndexError:
-                    jamo = jamo[:start] + double[c] + jamo[end:]
+                    jamo = jamo[:start] + double[c] + "X" + jamo[end:]
     else:
         for c, double_coda in enumerate(double):
             jamo = re.sub(double_coda, sep[c], jamo)
 
     #print(jamo)
+    jamo = jamo.replace('X', '')
     return(jamo)
-
-# TODO: 'ㅇ' removal / insertion for the empty onset
 
 
 if __name__ == '__main__':
     # test full decoding of hangul into jamo
-    print(han_to_jamo("밝뚥쀾뱦가웉"))
+    print(han_to_jamo("오빠"))
 
     # test double coda
-    double_coda("ㅂㅣㄺㅇㅜㄾㅑ",False)
+#    print(double_coda("ㅂㅣㄺㅜㄾㅑ", False))
 
     # test jamo-to-hangul
-#    jamo_to_han("ㄴㅏㄴ")
+    print(jamo_to_han("ㅗㅃㅏ"))
 
     # test hangul-to-jamo
 #    if len(sys.argv) > 1:
