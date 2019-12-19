@@ -1,0 +1,106 @@
+﻿<b><h3>Korean Phonological Neighbourhood Network</b></h3>
+<br>
+The <b>kPNN </b>is a project intended to make accessible the Korean data which Sunghyun 'Stanley' Nam and Professor Sun-hoi Kim at Chung-Ang University generated for<a href="http://dcollection.cau.ac.kr//jsp/common/DcLoOrgPer.jsp?sItemId=000000198203" target="_blank"> Nam (2017) </a>,<a href="http://namsling.tistory.com/attachment/cfile1.uf@9991AF385A86AE003484E8.pdf" target="_blank"> Nam (2018) </a>,<a href="https://www.kci.go.kr/kciportal/co/download/popup/poDownload.kci?storFileBean.orteFileId=KCI_FI002342049" target="_blank"> Nam & Kim (2018a) </a> and<a href="https://www.kci.go.kr/kciportal/co/download/popup/poDownload.kci?storFileBean.orteFileId=KCI_FI002388532" target="_blank"> Nam & Kim (2018b) </a>. There is another channel with the same purpose, but targeting researchers who are more R-friendly, which you can find <a href="https://namsling.tistory.com/9" target="_blank">here</a>.<br> 
+<br>
+This dataset contains EACH and EVERY monomorphemic lexeme from Standard Korean Dictionary (retrieved June 25, 2017) that has the absolute frequency of 10 or larger. The absolute frequency of a lexeme refers to the number of occasions that a lexeme appears in a corpus. Therefore 26,759 lexemes in this dataset almost cover all the Korean words that are actually used. See<a href="https://www.worldcat.org/oclc/1012767363" target="_blank"> Kang & Kim (2009) </a> (The Usage frequency in the Korean Language) for more.<br>
+<br>
+Caveat: Most Sino-Korean entries can actually be polymorphemic. If we were to follow the morphological analysis provided in SKD, every syllable in a Sino-Korean word should be analyzed as a different morpheme, which I thought is against the intuition. For example, 가계부 is regarded as monomorphemic rather than following SKD's analysis of 가계+부 (and then, 가+계).<br>
+<br>
+<br>
+<table class="txc-table" width="784" cellspacing="0" cellpadding="0" border="0" style="border:none;border-collapse:collapse;;font-family:" 맑은="" 고딕",="" sans-serif;font-size:13px"=""><tbody><tr><td style="width: 233px; height: 24px; border-width: 1px; border-style: solid; border-color: rgb(204, 204, 204);"><p>&nbsp;</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-top: 1px solid rgb(204, 204, 204);"><p>&nbsp;Count</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-top: 1px solid rgb(204, 204, 204);"><p>&nbsp;Proportion&nbsp;</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Native Korean (순우리말)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;3,493&nbsp;</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;13.05%</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Sino Korean (한자어)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;20,748</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;77.54%</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Foreign (외래어)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;2,518</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;9.41%</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Total (총계)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;26,759</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;100%</p></td>
+</tr>
+</tbody></table>
+<br>
+<br>
+This dataset has two major features. Each lexeme has information on the stratum and phonological neighbourhood. Each lexeme is in a group of either <i>Sunury</i> (Korean equivalent of Yamato Japanese), Sino-Korean or Foreign (mostly English loanwords) words, and which-word-belongs-where information is encoded in the dataset. Also, the number of phonological neighbours (also called the neighbour density) is calculated and shown in the dataset. Here, the number of phonological neighbours was counted from a whole lexicon. In other words strata were disregarded in calculating the density value.<br>
+<br>
+The notions of stratified lexicon and phonological neighbourhood are two pillars of this project. For the lexical strata in Korean, see<a href="http://roa.rutgers.edu/files/256-0498/roa-256-ito-2.pdf" target="_blank"> Itô & Mester (1999) </a>,<a href="http://www.phonology.or.kr/xe/?module=file&act=procFileDownload&file_srl=628&sid=17d4e2102268564c0e1c99a22dcab34b" target="_blank"> Kang Y. (1998) </a> and<a href="http://www.phonology.or.kr/xe/?module=file&act=procFileDownload&file_srl=699&sid=c578cf0d78581ceea0f3f4572100f4c9" target="_blank"> Chae (1999) </a>. For phonological neighbourhood network and its psycholinguistic implication, see<a href="https://www.ncbi.nlm.nih.gov/pubmed/18367686" target="_blank"> Vitevitch (2008) </a>. If you are not familiar with the concept of the phonological neighbourhood,<a href="https://eric.ed.gov/?id=ED353610" target="_blank"> Luce (1986) </a> is a good guide.<br>
+<br>
+<br>
+<b><h3>How to use this site</b></h3>
+You can use different functionalities by the menu on your left-hand side tab. <br>Click on the ≡ symbol above to hide the left tab.<br><br>
+<b>Front page (첫페이지)</b>: You are currently here. As you can see, nothing interesting happens here.<br> 
+<br>
+<b>Stratified Korean Lexicon</b>: This shows you a list of Korean words that belong to a particular stratum (or any strata), or have a certain number of phonological neighbours. Many works in psycholinguistics involve the neighbourhood density, and I think this wordlist can make it easier to find words to use in these experiments. If you want to find, for example, Sino-Korean words with more than 50 neighbours, select Sino-Korean and specify the range of Density to be 50 - 93. <br>
+<br>
+<b>Sample subcomponents</b>: This is for a demonstration. There are 570 sub-networks in the Korean phonological neighbourhood network, and most of them have two words only. The largest one (giant component in the literature) consists of 17063 words and the second largest one has 18 words. "Sample subcomponents" plots a graph for one of the eight largest components.<br>
+<br>
+<b>Phonological neighbourhood</b>: You can enter a Korean word, and "Phonological neighbourhood" will show you its phonological neighbour as a network graph and as a wordlist. <br>
+<br>
+<br>
+<br>
+<b><h3>한국어 음운망(kPNN)</b></h3>
+<br>
+<b>한국어 음운망 kPNN</b>은<a href="http://dcollection.cau.ac.kr//jsp/common/DcLoOrgPer.jsp?sItemId=000000198203" target="_blank"> Nam (2017) </a>,<a href="http://namsling.tistory.com/attachment/cfile1.uf@9991AF385A86AE003484E8.pdf" target="_blank"> Nam (2018) </a>,<a href="https://www.kci.go.kr/kciportal/co/download/popup/poDownload.kci?storFileBean.orteFileId=KCI_FI002342049" target="_blank"> Nam & Kim (2018a) </a> 그리고<a href="https://www.kci.go.kr/kciportal/co/download/popup/poDownload.kci?storFileBean.orteFileId=KCI_FI002388532" target="_blank"> Nam & Kim (2018b) </a>에서 사용된 한국어 어휘 데이터를 다른 연구자들이 쉽게 사용할 수 있도록 제공하는 프로젝트입니다. R을 사용할 줄 아시는 분들을 위해 다른 경로로도 제공하고 있습니다. <a href="https://namsling.tistory.com/9" target="_blank">여기를</a> 누르십시오.<br> 
+<br>
+이 자료에는 표준국어대사전 (2017년 6월 25일 기준)에 포함된 모든 단일어 중 절대빈도가 10회 이상인 것들이 전부 들어있습니다. 절대빈도라 함은, 말뭉치 상에서 해당 어휘형(lexeme)이 출현한 횟수를 말합니다. 따라서, 이 데이터에 포함된 26,759 개의 어휘형은 실제 사용되는 한국어 어휘들을 다 포함한다고 할 수 있습니다.<a href="https://www.worldcat.org/oclc/1012767363" target="_blank"> Kang & Kim (2009) </a> (강범모 김흥규 (2009), 한국어 사용빈도) 를 참조해주세요.<br>
+<br>
+주의: 대부분의 한자어는 사실 복합어입니다. 만약 국립국어원이 제공하는 형태소분리를 그대로 따른다면 대부분의 한자어는 각 음절별로 형태소 분리가 될 것입니다. 그러나 이것은 직관에 어긋난다고 생각합니다. 예컨대, <b>가계부</b> 라는 단어는 단일어로 분석되었습니다만, 표준국어대사전의 분석에 따르면 '가계'와 '부'로 분리되고, 더 나아가 '가계'는 '가家'와 '계計'로 분리되겠지요.<br>
+<br>
+<table class="txc-table" width="784" cellspacing="0" cellpadding="0" border="0" style="border:none;border-collapse:collapse;;font-family:" 맑은="" 고딕",="" sans-serif;font-size:13px"=""><tbody><tr><td style="width: 233px; height: 24px; border-width: 1px; border-style: solid; border-color: rgb(204, 204, 204);"><p>&nbsp;</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-top: 1px solid rgb(204, 204, 204);"><p>&nbsp;Count</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-top: 1px solid rgb(204, 204, 204);"><p>&nbsp;Proportion&nbsp;</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Native Korean (순우리말)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;3,493&nbsp;</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;13.05%</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Sino Korean (한자어)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;20,748</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;77.54%</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Foreign (외래어)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;2,518</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;9.41%</p></td>
+</tr>
+<tr><td style="width: 233px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204); border-left: 1px solid rgb(204, 204, 204);"><p>&nbsp;Total (총계)</p></td>
+<td style="width: 260px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;26,759</p></td>
+<td style="width: 290px; height: 24px; border-bottom: 1px solid rgb(204, 204, 204); border-right: 1px solid rgb(204, 204, 204);"><p>&nbsp;100%</p></td>
+</tr>
+</tbody></table>
+<br><br>
+이 자료에는 두 가지 장점이 있습니다. 각각의 단어가 층위정보와 음운이웃 정보를 가지고 있습니다. 한국어의 단어는 순우리말 (일본어학의 やまとの言葉에 대응되는 '고유어' 개념), 한자어 혹은 외래어 (대체로 영어로부터 온 말)로 나뉘고, 각 단어가 어디에 속하는지에 대한 정보가 본 자료에 표시되어 있습니다. 또한 음운이웃의 개수 (어떤 연구에서는 neighbor density라는 용어를 사용합니다)도 데이터에 표시되어 있습니다. 이때 음운이웃 개수는 층위를 나누지 않은 렉시콘 전체에서 계산되었습니다.<br>
+<br>
+렉시콘이 층위를 이루고 있다는 개념과 음운이웃이라는 개념은 본 프로젝트의 두 기둥과 같습니다. 한국어의 렉시콘 층위에 대해서는<a href="http://roa.rutgers.edu/files/256-0498/roa-256-ito-2.pdf" target="_blank"> Itô & Mester (1999) </a>,<a href="http://www.phonology.or.kr/xe/?module=file&act=procFileDownload&file_srl=628&sid=17d4e2102268564c0e1c99a22dcab34b" target="_blank"> Kang Y. (1998) </a> 그리고<a href="http://www.phonology.or.kr/xe/?module=file&act=procFileDownload&file_srl=699&sid=c578cf0d78581ceea0f3f4572100f4c9" target="_blank"> Chae (1999) </a>를 참고해주세요. 음운망의 개념과 그것의 심리언어학적 의의에 대해서는<a href="https://www.ncbi.nlm.nih.gov/pubmed/18367686" target="_blank"> Vitevitch (2008) </a>가 좋은 논문입니다. 음운이웃이 뭔지 모르시다면<a href="https://eric.ed.gov/?id=ED353610" target="_blank"> Luce (1986) </a>를 참고해주세요.<br>
+<br>
+<br>
+<b><h3>이 사이트 사용법</b></h3>
+다양한 기능을 왼쪽 탭에 있는 메뉴를 통해 이용할 수 있습니다.<br>화면 위쪽에 있는 ≡ 모양 기호를 누르면 왼쪽 탭을 없앨 수 있습니다.<br><br>
+<b>Front page (첫페이지)</b>: 지금 있는 곳입니다. 보시다시피 아무일도 일어나지 않습니다.<br> 
+<br>
+<b>Stratified Korean Lexicon</b>: 여기서는 특정 층위에 속하는 어휘 목록 (혹은 층위 고려하지 않고 전체 어휘 목록)을 찾아보거나, 음운이웃 개수를 지정해서 어휘 목록을 받아볼 수 있습니다. 심리언어학의 많은 연구들이 음운이웃개수(neighbourhood density)를 사용하던데, 이 단어목록을 이용한다면, 음운이웃이 많은단어, 적은단어, 그리고 특정 층위에 속하는데 음운이웃이 많은단어 등등을 쉽게 찾을 수 있을 것이라고 생각합니다. 예를 들어서, 한자어인데 음운이웃 개수가 50개 이상인 단어를 찾고싶다면, 여기에 들어가셔서 한자어를 선택한 다음 Density의 범위를 50 - 93으로 놓으시면 됩니다.<br>
+<br>
+<b>Sample subcomponents</b>: 이것은 보여주기용(?)으로 만들었는데, 음운망으로 구성한 한국어 렉시콘의 일부를 시각화할 수 있다는 것을 보여줍니다. 한국어 음운망에는 570개의 하위망이 있는데, 대부분은 단어 2개로만 구성되어 있습니다. 가장 큰 하위망 (선행연구에서 giant component 로도 불림)은 17063개의 단어로 구성되어 있고 두번째로 큰 하위망에는 고작 18개의 단어밖에 없습니다. "Sample subcomponents"는 한국어 음운망에서 덩치가 큰 8개의 하위망 중 하나를 선택해서 그것을 시각화할 수 있습니다. <br>
+<br>
+<b>Phonological neighbourhood</b>: 여기에서, 한국어 단어를 입력하시면, 그 단어의 음운이웃을 네트워크 그래프와 어휘목록으로 표현해줍니다.<br>
+<br>
+
+<b><h3>References</h3></b>
+<a href="http://www.phonology.or.kr/xe/?module=file&act=procFileDownload&file_srl=699&sid=c578cf0d78581ceea0f3f4572100f4c9" target="_blank"> Chae, S.-Y. 1999. The core-periphery structure in Korean lexicon reflected in a phonological variation and change (in Korean). <i>Studies in Phonetics, Phonology and Morphology, 5</i>, 217-236. </a><br><br>
+<a href="http://roa.rutgers.edu/files/256-0498/roa-256-ito-2.pdf" target="_blank"> Itô, J., & Mester, A. 1999. The phonological lexicon. In N. Tsujimura (Ed.), <i>The handbook of Japanese linguistics </i>(pp. 62-100). Oxford: Blackwell. </a><br><br>
+<a href="https://www.worldcat.org/oclc/1012767363" target="_blank"> Kang, B.-M., & Kim, H. 2009. <i>The usage frequency of the Korean language</i>. Seoul: Hankuk Munhwasa. </a><br><br>
+<a href="http://www.phonology.or.kr/xe/?module=file&act=procFileDownload&file_srl=628&sid=17d4e2102268564c0e1c99a22dcab34b" target="_blank"> Kang, Y. 1998. The organization of lexicon in Korean (in Korean). <i>Studies in Phonetics, Phonology and Morphology, 4</i>, 55-67. </a><br><br>
+<a href="https://eric.ed.gov/?id=ED353610" target="_blank"> Luce, P. A. 1986. <i>Neighborhoods of words in the mental lexicon. </i>(Research on Speech Perception, Technical Report No. 6). Bloomington, IN: Speech Research Laboratory, Department of Psychology, Indiana University. </a><br><br>
+<a href="http://dcollection.cau.ac.kr//jsp/common/DcLoOrgPer.jsp?sItemId=000000198203" target="_blank"> Nam, S. 2017. <i>The structures of English and Korean phonological networks: Small-world networks with assortative mixing by degree</i>. Chung-Ang University, Department of English Language and Literature, Seoul. Retrieved from http://dcollection.cau.ac.kr//jsp/common/DcLoOrgPer.jsp?sItemId=000000198203 </a><br><br>
+<a href="http://namsling.tistory.com/attachment/cfile1.uf@9991AF385A86AE003484E8.pdf" target="_blank"> Nam, S. 2018. <i>Phonotactic difference by lexical strata: A case from Korean phonological neighbourhood network analysis</i>. Poster presented at the 26th Conference of the Student Organisation of Linguistics in Europe (ConSOLE 2018), University College London, London, UK. </a><br><br>
+<a href="https://www.kci.go.kr/kciportal/co/download/popup/poDownload.kci?storFileBean.orteFileId=KCI_FI002342049" target="_blank"> Nam, S. and S. Kim. 2018a. A quantitative analysis of phonological neighborhood networks in English and Korean. <i>Studies in Phonetics, Phonology and Morphology 24</i>(1), 3-28. </a><br><br>
+<a href="https://www.kci.go.kr/kciportal/co/download/popup/poDownload.kci?storFileBean.orteFileId=KCI_FI002388532" target="_blank"> Nam, S. and S. Kim. 2018b. A comparison of consonant-vowel sequences among lexical strata in Korean. <i>Korean Journal of Linguistics 43</i>(3), 485-506. </a><br><br>
+<a href="https://www.ncbi.nlm.nih.gov/pubmed/18367686" target="_blank"> Vitevitch, M. S. (2008). What can graph theory tell us about word learning and lexical retrieval. <i>Journal of Speech, Language, and Hearing Research, 51</i>(2), 408-422. </a>
