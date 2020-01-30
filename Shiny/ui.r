@@ -2,6 +2,7 @@ library(shinydashboard)
 library(shiny)
 library(fresh)
 library(DT)
+library(waiter)
 frontText <- scan(file="data/documentation.txt", sep="`", what="char", quote=NULL, encoding="UTF-8",quiet=T)
 frontText <- paste(frontText, collapse="")
 dashboardPage(
@@ -64,6 +65,7 @@ dashboardPage(
 		# 3rd tab: sample subcomponents
 			tabItem(tabName = "sample",
 				fluidPage(
+				  use_waiter(include_js = FALSE),
 					titlePanel("Sample subcomponents"),
 					sidebarLayout(
 						sidebarPanel(
@@ -100,6 +102,7 @@ dashboardPage(
       # 4th tab: pnlist
 			tabItem(tabName = "pnlist",
 				fluidPage(
+				  use_waiter(include_js = FALSE),
 					titlePanel("Phonological Neighbourhood"),
 					sidebarLayout(
 						sidebarPanel(

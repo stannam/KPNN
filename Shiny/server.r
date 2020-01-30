@@ -5,6 +5,8 @@ library(networkD3)
 library(tidyverse)
 library(igraph)
 library(DT)
+library(waiter)
+
 if(Sys.info()[['sysname']] == 'Linux'){
   Sys.getlocale(category = "LC_ALL")
   Sys.setlocale("LC_ALL","korean")
@@ -15,12 +17,15 @@ if(Sys.info()[['sysname']] == 'Linux'){
 	system('fc-cache -f ~/.fonts')
 }
 
-total<-read_csv("data/words.csv")
+total <- read_csv("data/words.csv")
+total <- total %>% select(-serial)
 net <- readRDS("data/net.RDS")
 subnet <- decompose(net, mode = c("weak", "strong"), max.comps = NA, min.vertices = 8)
 
 shinyServer(function(input, output) {
-	
+  browser()
+  w3 <- Waiter$new(id = "samplePlot")
+  
 	#tab2
 	output$outputtable <- DT::renderDataTable({
 	  outputTable <- total
@@ -58,7 +63,8 @@ shinyServer(function(input, output) {
 	)
 
 	#tab3
-	output$samplePlot <- renderForceNetwork({
+	output$samplePlot <- renderForceNetwork(reactive({
+	  w3$show()
 		i <- as.numeric(input$subnet)
 		g <- subnet[[i]]
 		g$layout <- layout_with_kk
@@ -77,7 +83,8 @@ shinyServer(function(input, output) {
 		             fontSize = 13)
 		saveNetwork(network, "net.html")
 		network
-	})
+		w3$hide()
+	}))
 	output$savesubgraph <- downloadHandler(
 	  filename = function() {
 	    paste("Subgraph","html",sep=".")
@@ -104,10 +111,7 @@ shinyServer(function(input, output) {
 	)
 	
 	output$neighbourtable <- DT::renderDataTable({
-		if(length(which(total$orthography==input$text))==0){
-			neighborList<-"try other word!"
-		}
-		else {
+		if(length(which(total$orthography==input$text))>0){
 			nlist <- as_ids(neighbors(net, which(total$orthography==input$text)))
 			nlist <- as.numeric(nlist) 								# list of neighbors as vertex id
 			nlist <- c(which(total$orthography==input$text),nlist)	# the target word must come at the top of the table so add the id for target word at the beginning
@@ -134,6 +138,7 @@ shinyServer(function(input, output) {
 		g <<- induced_subgraph(net,vertexList)
 		nd3_g <- igraph_to_networkD3(g)
 		nd3_g$nodes$name <- V(g)$entry
+		nd3_g$nodes$size <- log(V(g)$afreq)
 		network <- forceNetwork(Links = nd3_g$links,
 		                        Nodes = nd3_g$nodes,
 		                        NodeID = "name",

@@ -1,5 +1,7 @@
 import regex as re
 import sys
+import os
+
 GA_CODE, G_CODE, ONSET, CODA = 44032, 12593, 588, 28
 # The unicode representation of the Korean syllabic orthography starts with GA_CODE
 # The unicode representation of the Korean phonetic (jamo) orthography starts with G_CODE
@@ -45,6 +47,7 @@ def han_to_jamo(word, empty_onset=False):
     return(jamo)
 
 def jamo_to_han(jamo):
+    jamo = re.sub(" ", "", jamo)
     jamo = double_coda(jamo, encode=True)
     cv = cv_tagger(jamo)
 
@@ -108,7 +111,13 @@ def cv_tagger(jamo):
 
 def double_coda(jamo, encode=False):
     double, sep = [], []
-    with open("../criteria/double_coda.csv", "r", encoding="utf-8") as f:
+    if hasattr(sys, "frozen"):
+        bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+        path = os.path.join(bundle_dir, 'criteria', 'double_coda.csv')
+    else:
+        path = os.path.join(os.getcwd(), 'criteria', 'double_coda.csv')
+
+    with open(path, "r", encoding="utf-8") as f:
         next(f)
         for line in f:
             items = line.split(",")

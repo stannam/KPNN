@@ -2,27 +2,27 @@ from itertools import combinations
 from editdistance import eval
 
 def looping(Corpus):
-    seg_pairs = combinations(Corpus.seg, 2)
-    Corpus.PNL_seg = genPNPair(seg_pairs)
+    Corpus.PNL_seg = genPNPair(Corpus.seg,Corpus.name,"seg")
 
-    syll_pairs = combinations(Corpus.syll, 2)
-    Corpus.PNL_syll = genPNPair(syll_pairs)
+    Corpus.PNL_syll = genPNPair(Corpus.syll,Corpus.name,"syll")
 
     return Corpus
 
-def genPNPair(pairs):
 
+def genPNPair(words,langinfo,syllphon):
+    pairs = combinations(words, 2)
     neighbourPairs = []
 
     for p in pairs:
-        w1 = p[0]
-        w2 = p[1]
+        w1 = words[p[0]]
+        w2 = words[p[1]]
 
         if (len(w1) > (len(w2) - 2)) & (len(w1) < (len(w2) + 2)):
-            ed = eval(w1, w2)
+            ed = edit_dist(w1, w2)
 
             if ed == 1:
-                #print((p[0], p[1]))
+                print(langinfo+", "+syllphon)
+                print((p[0], p[1]))
                 neighbourPairs.append((p[0], p[1]))
 
     return neighbourPairs
