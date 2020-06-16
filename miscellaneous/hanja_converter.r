@@ -1,6 +1,6 @@
 if (!require(httr)) install.packages("httr")
 library(httr)
-GET("https://raw.githubusercontent.com/suminb/hanja/develop/hanja/pairs.py", write_disk(tf <- tempfile(fileext = ".py")))
+GET("https://raw.githubusercontent.com/suminb/hanja/develop/hanja/table.yml", write_disk(tf <- tempfile(fileext = ".yml")))
 raw_reference <- readLines(con = tf)
 raw2 <- gsub("u'|\':|',","", raw_reference[2:(length(raw_reference)-1)])
 concordance_table <- read.table(text = raw2, 
