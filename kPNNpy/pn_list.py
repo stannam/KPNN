@@ -59,17 +59,17 @@ if __name__ == '__main__':
     pass
 
 #    code_to_test = '''
-#str1 = ["f","s","f","f","v","f","d","s","b","b","d","f","v","v","d","a","v","a","v","a","v"]
-#str2 = ["sa", "tur", "day"]
-#    '''
-#    for i in [100, 1000, 10000, 100000, 1000000, 10000000]:
-#        t_eval = timeit.timeit(code_to_test+'\neval(str1,str2)',
-#                               "from editdistance import eval",
-#                               number=i)
-#        print(str(i) + "\t" + str(t_eval))
+# str1 = ["f","s","f","f","v","f","d","s","b","b","d","f","v","v","d","a","v","a","v","a","v"]
+# str2 = ["sa", "tur", "day"]
+#     '''
+#     for i in [100, 1000, 10000, 100000, 1000000, 10000000]:
+#         t_eval = timeit.timeit(code_to_test+'\neval(str1,str2)',
+#                                "from editdistance import eval",
+#                                number=i)
+#         print(str(i) + "\t" + str(t_eval))
 #
-    #t1 = timeit.timeit('edit_dist([["say"], ["tur"], ["day"]], [["sa"], ["tur"], ["day"]])',
-    #                  "from __main__ import edit_dist",
-    #                  number=1000)
-    #print(t1)
+#     t1 = timeit.timeit('edit_dist([["say"], ["tur"], ["day"]], [["sa"], ["tur"], ["day"]])',
+#                       "from __main__ import edit_dist",
+#                       number=1000)
+#     print(t1)
 
