@@ -21,6 +21,8 @@ tryCatch(
 if (!require(pbapply)) install.packages("pbapply")
 library(pbapply)
 
+if (!require(tidyverse)) install.packages("tidyverse")
+library(tidyverse)
 
 convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL, sboundary = F){
   while (nchar(convention) < 1) {
