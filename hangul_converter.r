@@ -70,7 +70,7 @@ convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL
 }
 
 toJamo <- function(data, removeEmptyOnset = TRUE, sboundary = FALSE) {
-  criteria_DoubleCoda <- read.table(file=".\\criteria\\double_coda.csv", sep = ",", header=TRUE)
+  criteria_DoubleCoda <- read_csv(file=".\\criteria\\double_coda.csv")
   
   syllable <- convertHangulStringToJamos(data)
   for (j in 1:length(syllable)) {
@@ -100,14 +100,14 @@ toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location
     convention <- readline(prompt = "You must specify a name for convention: ")
   }
   if (convention == "klat"){
-    Klattese <- read.table(file = ".\\criteria\\klattese.csv", fileEncoding = "utf-8", sep = ",", header=T)
+    Klattese <- read_csv(file = ".\\criteria\\klattese.csv")
   } else {
     while(length(transcription_location) == 0){
       transcription_location <- choose.files(default = "", 
                                              caption = "Select a jamo-to-phonetic-symbol table", multi = F)
       assign("transcription_location", transcription_location, envir = env)
     }
-    Klattese <- read.table(file = transcription_location, sep = ",", header=T)
+    Klattese <- read_csv(file = transcription_location)
   }
   
   letter <- unlist(strsplit(jamo,split=""))
@@ -122,7 +122,7 @@ toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location
 }
 
 CV_mark <- function(input){
-  CV_ref <- read.table(file = ".\\criteria\\klattese.csv", fileEncoding = "utf-8", sep = ",", header=T)
+  CV_ref <- read_csv(file = ".\\criteria\\klattese.csv")
   output <- vector()
   phoneme <- unlist(strsplit(input,split=""))
   for (j in 1:length(phoneme)){
@@ -233,7 +233,7 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
   if(!grepl("p",rules)){
     jamo <- toJamo(data, removeEmptyOnset = T)
   } else {
-    criteria_DoubleCoda <- read.table(file=".\\criteria\\double_coda.csv", sep = ",", header=TRUE)
+    criteria_DoubleCoda <- read_csv(file=".\\criteria\\double_coda.csv")
     syllable <- convertHangulStringToJamos(data)
     for (j in 1:length(syllable)) {
       DC <- match(substr(syllable[j],3,3), criteria_DoubleCoda$double)
@@ -258,7 +258,7 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
   }
   
   if(grepl("a",rules)){
-    criteria_Aspiration<-read.table(".\\criteria\\aspiration.csv",sep = ",",header=T)
+    criteria_Aspiration<-read_csv(".\\criteria\\aspiration.csv")
     if(grepl("ㅎ",jamo)){
       for (l in 1:nrow(criteria_Aspiration)){
         if(grepl(criteria_Aspiration$from[l],jamo)){
@@ -272,7 +272,7 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
   cv <- CV_mark(jamo)
   
   if(grepl("c",rules)){
-    criteria_DoubleCoda <- read.table(file=".\\criteria\\double_coda.csv", sep = ",", header=TRUE)
+    criteria_DoubleCoda <- read_csv(file=".\\criteria\\double_coda.csv")
     CCC_location<-unlist(gregexpr("VCCC",cv))
     for (l in CCC_location){
       CCC_part<-substr(jamo,l+1,l+2)
@@ -297,7 +297,7 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
   }
   
   if(grepl("s",rules)){
-    criteria_Assimilation <- read.table(".\\criteria\\assimilation.csv",sep = ",",header=TRUE)
+    criteria_Assimilation <- read_csv(".\\criteria\\assimilation.csv")
     for (l in 1:nrow(criteria_Assimilation)){
       if(grepl(criteria_Assimilation$from[l],jamo)){
         jamo <- sub(criteria_Assimilation$from[l],criteria_Assimilation$to[l],jamo)
@@ -307,7 +307,7 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
   }
   
   if(grepl("t",rules)){
-    criteria_Tensification <- read.table(".\\criteria\\tensification.csv",sep = ",",header=TRUE)
+    criteria_Tensification <- read_csv(".\\criteria\\tensification.csv")
     for (l in 1:nrow(criteria_Tensification)){
       if(grepl(criteria_Tensification$from[l],jamo)){
         jamo <- sub(criteria_Tensification$from[l],criteria_Tensification$to[l],jamo)
@@ -316,7 +316,7 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
   }
   
   if(grepl("n",rules)){
-    neutral <- read.table(".\\criteria\\neutralization.csv",sep = ",",header=TRUE)
+    neutral <- read_csv(".\\criteria\\neutralization.csv")
     phoneme <- unlist(strsplit(jamo,split=""))
     for (l in 1:length(phoneme)){
       if(is.na(match(phoneme[l],neutral$from))==FALSE){
