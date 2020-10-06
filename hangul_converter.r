@@ -1,4 +1,13 @@
-if (!require(KoNLP)) install.packages("KoNLP")
+installKoNLP <- function(){
+  install.packages("multilinguer")
+  library(multilinguer)
+  install_jdk()
+  install.packages(c("hash", "tau", "Sejong", "RSQLite", "devtools", "bit", "rex", "lazyeval", "htmlwidgets", "crosstalk", "promises", "later", "sessioninfo", "xopen", "bit64", "blob", "DBI", "memoise", "plogr", "covr", "DT", "rcmdcheck", "rversions"), type = "binary")
+  install.packages("remotes")
+  remotes::install_github('haven-jeon/KoNLP', upgrade = "never", INSTALL_opts=c("--no-multiarch"))
+}
+
+if (!require(KoNLP)) installKoNLP()
 tryCatch(
   library(KoNLP),
   error = function(e) {
@@ -11,6 +20,7 @@ tryCatch(
 
 if (!require(pbapply)) install.packages("pbapply")
 library(pbapply)
+
 
 convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL, sboundary = F){
   while (nchar(convention) < 1) {
