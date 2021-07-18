@@ -96,7 +96,7 @@ surface_table <- applyRulesToHangul(data = data[1:30,],
                                     entry = "entry", 
                                     rules = "pacstnh")
   
-  # [규칙의 종류와 순서]
+  # [규칙의 종류 및 순서]
   # (P)alatalization: 구개음화 (맏이 -> 마지)
   # (A)spiration: 격음화 (북한 -> 부칸)
   # (C)omplex coda simplification: 자음군단순화 (닭도 -> 닥도, 닭 -> 닥)
