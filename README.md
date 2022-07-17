@@ -1,7 +1,7 @@
 # KPNN
-The Korean Phonological Neighbourhood Network project.
+The Korean Phonological Neighbourhood Network project: neighbourhood density for each monomorphemic word, Korean etymological strata, and phonological neighbourhood network.
 
-한국어 음운이웃 네트워크 프로젝트
+한국어 음운이웃 네트워크 프로젝트: 단일어 별 음운이웃 개수, 한국어의 어원층위, 그리고 음운이웃 네트워크.
 
 # KPNN featured in
  * Shinyapp (**start here**): https://namsling.shinyapps.io/kpnn/ 
