@@ -4,8 +4,8 @@ if (!require(readxl)) install.packages("readxl")
 library(readxl)
 library(httr)
 GET("https://www.dropbox.com/s/4o12muqa6z2j67r/07a_top1000.uni.xlsx?dl=1", write_disk(tf <- tempfile(fileext = ".xlsx")))
-raw <- read_xlsx(path = tf, col_names = T)
-raw_data = read.csv(file = file.choose(), header = TRUE)
+raw <- read_xlsx(path = tf, col_names = T) # run this line to work on the example file from dropbox
+raw_data = read.csv(file = file.choose(), header = TRUE, fileEncoding = 'utf-8', stringsAsFactors=FALSE) # run this line and the next to work on a local file (encoding=utf8).
 raw = raw_data
 # 1. data cleaning
 source(".\\data_cleaning.r", encoding = "UTF-8")

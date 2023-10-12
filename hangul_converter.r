@@ -49,7 +49,14 @@ convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL
       colnames(result) <- c("jamo",convention)
       result <- cbind(data, result)
       return(result)
-      } else stop("Please input a character, data.frame or tbl object.")
+    } else if (class(data)=="factor") {
+      factorresult <- convertHangul(as.character(data))
+      return(factorresult)
+        
+    } else {
+        
+      }
+    stop("Please input a character, data.frame or tbl object.")
     }
   if (is.null(env)) {
     env = environment()
@@ -72,6 +79,7 @@ convertHangul <- function(data, entry = "entry", convention = "klat", env = NULL
 }
 
 toJamo <- function(data, removeEmptyOnset = TRUE, sboundary = FALSE) {
+  # Hangul forms to Jamo
   criteria_DoubleCoda <- read_csv(file=".\\criteria\\double_coda.csv")
   
   syllable <- convertHangulStringToJamos(data)
@@ -98,6 +106,7 @@ toJamo <- function(data, removeEmptyOnset = TRUE, sboundary = FALSE) {
 }
 
 toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location = NULL) {
+  # It converts Jamo into Klattese or other transcription systems.
   while (nchar(convention) < 1) {
     convention <- readline(prompt = "You must specify a name for convention: ")
   }
@@ -124,6 +133,7 @@ toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location
 }
 
 CV_mark <- function(input){
+  # This function is for identifying a Jamo as either consonant or vowel.
   CV_ref <- read_csv(file = ".\\criteria\\klattese.csv")
   output <- vector()
   phoneme <- unlist(strsplit(input,split=""))
@@ -139,6 +149,8 @@ CV_mark <- function(input){
 }
 
 toHangul <- function(input, emptyOnset = F){
+  # this function assembles jamo into Hangul forms. input = jamo, emptyonset = T/F (whether the 'input' data has emptyOnsets), 
+  # it returns Hangul forms.
   if (!is.character(input) | nchar(input) == 0) {
     stop("Input must be legitimate character!")
   }
@@ -354,4 +366,62 @@ applyRulesToHangul <- function(data, entry = "entry", rules = "pacstnh"){
   
   output <- toHangul(jamo, emptyOnset = F)
   return(output)
+}
+
+klatToJamo <- function(symbols, convention = "klat", env = NULL, transcription_location = NULL, bypass = NULL){
+  # It converts klat or other transcription systems into Jamo. 'symbols' = klattese or other transcription system. 
+  # convention = shortname for the transcription system. if klat then uses the existing jamo-to-symbol table.
+  while (nchar(convention) < 1) {
+    convention <- readline(prompt = "You must specify a name for convention: ")
+  }
+  if (convention == "klat"){
+    Klattese <- read_csv(file = ".\\criteria\\klattese.csv")
+  } else if (convention == "bypass!") {
+    Klattese <- bypass
+  } else {
+    while(length(transcription_location) == 0){
+      transcription_location <- choose.files(default = "", 
+                                             caption = "Select a jamo-to-phonetic-symbol table", multi = F)
+      assign("transcription_location", transcription_location, envir = env)
+    }
+    Klattese <- read_csv(file = transcription_location)
+  }
+  
+  letter <- unlist(strsplit(symbols,split=""))
+  for (l in 1:length(letter)){
+    if(is.na(match(letter[l], Klattese$CKlattese))==T){
+      letter[l] <- as.character(Klattese$V[match(letter[l], Klattese$VKlattese)])
+    } else {
+      letter[l]<-as.character(Klattese$C[match(letter[l],Klattese$CKlattese)])}
+  }
+  jamo <- paste(letter,collapse="")
+  return(jamo)
+}
+toKlat <- function(jamo, convention = "klat", env = NULL, transcription_location = NULL) {
+  # It converts Jamo into Klattese or other transcription systems.
+  while (nchar(convention) < 1) {
+    convention <- readline(prompt = "You must specify a name for convention: ")
+  }
+  if (convention == "klat"){
+    Klattese <- read_csv(file = ".\\criteria\\klattese.csv")
+  } else if (convention == "bypass!") {
+    Klattese <- bypass
+  } else {
+    while(length(transcription_location) == 0){
+      transcription_location <- choose.files(default = "", 
+                                             caption = "Select a jamo-to-phonetic-symbol table", multi = F)
+      assign("transcription_location", transcription_location, envir = env)
+    }
+    Klattese <- read_csv(file = transcription_location)
+  }
+  
+  letter <- unlist(strsplit(jamo,split=""))
+  for (l in 1:length(letter)){
+    if(is.na(match(letter[l], Klattese$C))==T){
+      letter[l] <- as.character(Klattese$VKlattese[match(letter[l], Klattese$V)])
+    } else {
+      letter[l]<-as.character(Klattese$CKlattese[match(letter[l],Klattese$C)])}
+  }
+  klat <- paste(letter,collapse="")
+  return(klat)
 }

@@ -27,25 +27,29 @@ nngram <- function(data, entry = "entry", convention = "klat", unit = NULL, ngra
   wstop <- paste0(rep("#",ngramn-1),collapse="")
   ngram_data <- paste0(wstop,paste0(x, wstop, collapse="")) 
   ngr <- ngram(ngram_data, n=ngramn, sep="")
-  return(ngr)
+  return(list(ngr,x))
 }
 
 
 rlexgen <- function(x, entry = "entry", convention, unit, ngramn = 2, rlex = 1, num = 0, wordlength = 5) { 		
   # x: either ngram object (result of nngram()) or data.frame object
   # rlex: the number of phonotactic pseudo-lexicons to be generated
-  if (class(x)[1] != "ngram") {
-    ngr <- nngram(data = x, entry, convention, unit, ngramn) 
-    wordlength <- mean(nchar(as.character(x[[entry]])))
-    if (num ==0) num <- nrow(x)
+  if (class(x[[1]]) != "ngram") {
+    ngr_x <- nngram(data = x, entry, convention, unit, ngramn)
+    ngr <- ngr_x[[1]]
+    x <- ngr_x[[2]]
+    wordlength <- mean(nchar(as.character(x)))
   } else {
-    ngr <- x
+    ngr <- x[[1]]
+    x <- x[[2]]
   }
+  if (num ==0) num <- length(x)
   
   termi <- 0					# 생성된 렉시콘 개수를 counting하기 위한 변수
   wstop <- paste0(rep("#",(ngr@n)-1),collapse="")
   output <- vector()
   while(termi != rlex) {
+    print(paste("creating pseudo-lexicon #", termi+1))
     intermediate<-babble(ngr,num*15)		# 함수 babble은 ngr을 기준으로 markov chain 생성하는데, 단어길이 제어 및 중복단어 제거하면 떨어져나갈 outlier들을 고려하여 num에 비해 15배 생성.
     intermediate<-gsub(" ", "", intermediate, fixed = TRUE)
     intermediate<-unlist(strsplit(intermediate, wstop, fixed = TRUE)) # word boundary 기준으로 잘라준다.
@@ -56,8 +60,12 @@ rlexgen <- function(x, entry = "entry", convention, unit, ngramn = 2, rlex = 1, 
     if(length(intermediate)>num+1){						# 생성된 random lexicon의 단어개수가 원래 lexicon보다 많을 경우에는,
       intermediate<-intermediate[2:(num+1)]				# 2번째부터 num+1번째까지를 random lexicon으로 삼음
       if (mean(nchar(intermediate))>wordlength*.9 & mean(nchar(intermediate))<wordlength*1.5){	# 평균단어길이 제약 통과시
+        print("succeed!")
         output<-cbind(output, intermediate)							# 출력값 output에 저장함
         termi<-termi+1
+      }
+      else{
+        print("failed.")
       }
     }
   }
